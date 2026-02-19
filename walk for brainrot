@@ -40,7 +40,7 @@ local SelectedBrainrots = {}
 
 
 
-local ui = UILibrary.new({
+local ui = UILibrary.Main.new({
 
 	TitleText = "Walk For Brainrot",
 
