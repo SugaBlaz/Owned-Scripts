@@ -1,0 +1,325 @@
+function safeloadstring(url)
+
+	local code = game:HttpGet(url)
+
+	local func, errorMessage = loadstring(code)
+
+
+
+	if func then
+
+		print("Script compiled! Executing...")
+
+		return func()
+
+	else
+
+		warn("LOADSTRING FAILED: " .. tostring(errorMessage))
+
+		return nil
+
+	end
+
+end
+
+
+
+local UILibrary = safeloadstring("https://raw.githubusercontent.com/SugaBlaz/UI-Library/refs/heads/main/MainUI")
+
+local doneloading = false
+
+local LP = game:GetService("Players").LocalPlayer
+
+local Char = LP.Character or LP.CharacterAdded:Wait()
+
+local RS = game:GetService("RunService")
+
+
+
+local SelectedBrainrots = {}
+
+
+
+local ui = UILibrary.new({
+
+	TitleText = "Walk For Brainrot",
+
+	Size = UDim2.new(0, 175, 0, 225),
+
+	Position = UDim2.new(0.5, -140, 0.5, -190),
+
+	TitleHeight = 30,
+
+	CornerRadius = 6,
+
+	ElementPadding = 6,
+
+	Font = Enum.Font.GothamBold,
+
+	TextSize = 12,
+
+	SectionHeight = 20,
+
+	UIStrokeThickness = 1,
+
+	SliderColor = Color3.fromRGB(54, 54, 54),
+
+	NotifcationSound = "rbxassetid://80833448337193",
+
+	ResetOnSpawn = false,
+
+	Addons = {},
+
+	KeySystemEnabled = false,
+
+	TabPadding = 10,
+
+	UseOwnTheme = false,
+
+	Theme = "Serenity",
+
+	SaveOnExit = true,
+
+})
+
+
+
+ui:CreateFakeLoading({
+
+		Size = UDim2.new(0, 189, 0, 126),
+
+		Position = UDim2.new(0.471, 0, 0.492, 0),
+
+		Title = "Loading...",
+
+		Description = "Subscribe to KeelSugaBlaz!",
+
+		WaitTime = {0.01, 0.1}, -- the time between moving the bar
+
+		WaitTime2 = {0.01, 0.1}, -- the time to wait before activbating the waittime2
+
+		UIStrokeEnabled = true,
+
+		UIStrokeThickness = 2,
+
+		CallBack = function()
+
+			doneloading = true
+
+		end,
+
+	})
+
+
+
+	repeat
+
+		task.wait()
+
+	until doneloading
+
+
+
+	ui:MakeDraggableButton({
+
+		BGTransparency = 1,
+
+		Size = UDim2.new(0, 50, 0, 50),
+
+		Position = UDim2.new(0.5, 0, 0.5, 0),
+
+		UIStrokeEnabled = true,
+
+		CornerRadius = UDim.new(0, 6),
+
+		UIStrokeThickness = 2,
+
+		Name = "SBEUILib",
+
+		URL = "https://i.ibb.co/xK20Pwph/SBEUILib.png",
+
+		Callback = function()
+
+			ui:ToggleFrameVisibility()
+
+		end,
+
+	})
+
+
+
+ui:AddSection("Main")
+
+
+
+ui:AddMultiDropdown({
+
+	Text = "Brainrot Rarity",
+
+	Flag = "MD1",
+
+	Options = {"Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Brainrot God", "Secret"},
+
+	Default = {"Brainrot God", "Secret"},
+
+	Callback = function(selectedList)
+
+		SelectedBrainrots = selectedList
+
+	end,
+
+	SavingEnabled = true
+
+})
+
+
+
+function Collect(v)
+
+	if v and v.PrimaryPart then
+
+		local root = Char:FindFirstChild("HumanoidRootPart")
+
+		local prompt = v:FindFirstChildOfClass("ProximityPrompt") or v.PrimaryPart:FindFirstChildOfClass("ProximityPrompt")
+
+
+
+		if root and prompt then
+
+			root.CFrame = v.PrimaryPart.CFrame
+
+			
+
+			task.wait(0.1)
+
+
+
+			fireproximityprompt(prompt)
+
+			
+
+			task.wait(0.1)
+
+			
+
+			root.CFrame = workspace.World.ClaimArea.CFrame
+
+		end
+
+	end
+
+end
+
+
+
+ui:AddToggle({
+
+	Text = "Start Collecting Brainrots",
+
+	Default = false,
+
+	Callback = function(state)
+
+		_G.Collecting = state 
+
+
+
+		while _G.Collecting do
+
+			if SelectedBrainrots and #SelectedBrainrots > 0 then
+
+				local notcollected = {}
+
+
+
+				for _, v in pairs(workspace.SpawnedEntities:GetChildren()) do
+
+					local billboard = v:FindFirstChild("SpawnedEntityBillBoard")
+
+					local rarityLabel = billboard and billboard:FindFirstChild("Rarity")
+
+
+
+					if rarityLabel and v.PrimaryPart then
+
+						if table.find(SelectedBrainrots, rarityLabel.Text) then
+
+							table.insert(notcollected, v)
+
+						end
+
+					end
+
+				end
+
+
+
+				for i = #notcollected, 1, -1 do
+
+					local target = notcollected[i]
+
+
+
+					if not _G.Collecting then break end
+
+
+
+					if target and target.Parent then
+
+						Collect(target)
+
+						table.remove(notcollected, i) 
+
+					end
+
+				end
+
+			end
+
+			task.wait(0.5) 
+
+		end
+
+	end,
+
+	Flag = "T1",
+
+	SavingEnabled = true
+
+})
+
+
+
+ui:AddSlider({
+
+	Text = "Walkspeed",
+
+	Default = 16,
+
+	Min = 0,
+
+	Max = 1000,
+
+	Flag = "S1",
+
+	SavingEnabled = true,
+
+	Callback = function(num)
+
+		RS.RenderStepped:Connect(function()
+
+			Char.Humanoid.WalkSpeed = num
+
+		end)
+
+	end,
+
+})
+
+
+
+ui:AddSeparator()
+
+
+
+ui:AddLabel("Made by SugaBlaz")
