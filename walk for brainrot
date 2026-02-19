@@ -49,11 +49,18 @@ local ui = UILibrary.Main.new({
 })
 
 ui:CreateFakeLoading({
-    Title = "Loading...",
-    Description = "Subscribe to KeelSugaBlaz!",
-    WaitTime = {0.01, 0.1},
-    CallBack = function() doneloading = true end,
-})
+		Size = UDim2.new(0, 189, 0, 126),
+		Position = UDim2.new(0.471, 0, 0.492, 0),
+		Title = "Loading Universal Hub...",
+		Description = "Subscribe to KeelSugaBlaz!",
+		WaitTime = {0.01, 0.1}, -- the time between moving the bar
+		WaitTime2 = {0.01, 0.1}, -- the time to wait before activbating the waittime2
+		UIStrokeEnabled = true,
+		UIStrokeThickness = 2,
+		CallBack = function()
+			doneloading = true
+		end,
+	})
 
 repeat task.wait() until doneloading
 
