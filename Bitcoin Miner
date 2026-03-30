@@ -116,3 +116,5 @@ win:AddLabel({
 win:AddLabel({
     Text = "V1.2"
 })
+
+-- fufufu
