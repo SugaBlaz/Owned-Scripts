@@ -1,0 +1,159 @@
+local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/SugaBlaz/UI-Library/refs/heads/main/Atomiko%20UI.lua"))()
+
+local player = game:GetService("Players").LocalPlayer
+local RS = game:GetService("ReplicatedStorage")
+
+local Events = RS:WaitForChild("Events")
+local algofolders = player.PlayerGui:WaitForChild("NewUi").UiButtons.SubButtonsMenu.Algorithms.AlgStore
+
+local states = {
+	ACA = false,
+	ASB = false,
+	ASS = false,
+	ASQ = false
+}
+
+local nums = {
+	["1SHA-512"] = 1,
+	["2Dagger"] = 2,
+	["3Scrypt"] = 3,
+	["4BloxChain"] = 4
+}
+
+local function getBestRate()
+	local bestRate = 0
+	local bestAlgNum = nil
+
+	for _, v in pairs(algofolders:GetChildren()) do
+		if v:IsA("TextLabel") then
+			local cleanRate = string.gsub(v.Rate.Text, "x", "")
+			local val = tonumber(cleanRate)
+
+			if val and val > bestRate then
+				bestRate = val
+				bestAlgNum = nums[v.Name]
+			end
+		end
+	end
+
+	return bestRate, bestAlgNum
+end
+
+local win = lib:CreateWindow(
+	{
+		Name = "Bitcoin Miner", 
+		Position = UDim2.new(0.5, 0, 0.5, 0), 
+		Size = UDim2.new(0, 250, 0, 250)
+	}
+)
+
+win:AddToggle(
+	{
+		Text = "Auto Change Algorithm",
+		Default = false,
+		Callback = function(state)
+			states["ACA"] = state
+		end
+	}
+)
+
+win:AddToggle(
+	{
+		Text = "Auto Sell Bitcoin",
+		Default = false,
+		Callback = function(state)
+			states["ASB"] = state
+		end
+	}
+)
+
+win:AddToggle(
+	{
+		Text = "Auto Sell Solaris",
+		Default = false,
+		Callback = function(state)
+			states["ASS"] = state
+		end
+	}
+)
+
+win:AddToggle(
+	{
+		Text = "Auto Sell Quasar",
+		Default = false,
+		Callback = function(state)
+			states["ASQ"] = state
+		end
+	}
+)
+
+win:AddSlider(
+	{
+		Text = "WalkSpeed",
+		Default = 16,
+		Min = 16,
+		Max = 300,
+		Callback = function(val)
+			player.Character.Humanoid.WalkSpeed = val
+		end
+	}
+)
+
+win:AddLabel(
+	{
+		Text = "Developed By SugaDev"
+	}
+)
+
+task.spawn(function()
+	while states["ACA"] == true do
+		local rate, num = getBestRate()
+		
+		local args = {
+			tonumber(num)
+		}
+		
+		Events:WaitForChild("AlgoChange"):FireServer(unpack(args))
+		
+		task.wait(1)
+	end
+end)
+
+task.spawn(function()
+	while states["ASB"] == true do
+		local args = {
+			"Bitcoin",
+			1
+		}
+		
+		Events:WaitForChild("Exchanger"):WaitForChild("Exchange"):InvokeServer(unpack(args))
+		
+		task.wait(1)
+	end
+end)
+
+task.spawn(function()
+	while states["ASS"] == true do
+		local args = {
+			"Solaris",
+			1
+		}
+
+		Events:WaitForChild("Exchanger"):WaitForChild("Exchange"):InvokeServer(unpack(args))
+
+		task.wait(1)
+	end
+end)
+
+task.spawn(function()
+	while states["ASQ"] == true do
+		local args = {
+			"Quasar",
+			1
+		}
+
+		Events:WaitForChild("Exchanger"):WaitForChild("Exchange"):InvokeServer(unpack(args))
+
+		task.wait(1)
+	end
+end)
