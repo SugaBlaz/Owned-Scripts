@@ -112,3 +112,7 @@ win:AddSlider({
 win:AddLabel({
     Text = "Developed By SugaDev"
 })
+
+win:AddLabel({
+    Text = "V1.2"
+})
