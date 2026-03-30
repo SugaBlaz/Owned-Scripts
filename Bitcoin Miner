@@ -4,7 +4,7 @@ local player = game:GetService("Players").LocalPlayer
 local RS = game:GetService("ReplicatedStorage")
 
 local Events = RS:WaitForChild("Events")
-local algofolders = player.PlayerGui:WaitForChild("NewUi").UiButtons.SubButtonsMenu.Algorithms.AlgStore
+local algofolders = player.PlayerGui:WaitForChild("NewUi").UiButtons.SubButtonsContainer.SubButtonsMenu.Algorithms.AlgStore
 
 local states = {
 	ACA = false,
