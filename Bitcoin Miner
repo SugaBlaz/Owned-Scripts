@@ -35,7 +35,7 @@ local function getBestRate()
     local bestAlgNum = nil
 
     for _, v in pairs(algofolders:GetChildren()) do
-        if v:IsA("TextLabel") and v:FindFirstChild("Rate") then
+        if v:IsA("TextButton") and v:FindFirstChild("Rate") then
             local cleanRate = string.gsub(v.Rate.Text, "x", "")
             local val = tonumber(cleanRate)
 
@@ -45,6 +45,7 @@ local function getBestRate()
             end
         end
     end
+
     return bestAlgNum
 end
 
@@ -64,7 +65,7 @@ win:AddToggle({
                 while states["ACA"] do
                     local num = getBestRate()
                     if num then
-                        Events:WaitForChild("AlgoChange"):FireServer(tonumber(num))
+                        Events:WaitForChild("AlgoChang"):FireServer(tonumber(num))
                     end
                     task.wait(1)
                 end
@@ -89,7 +90,7 @@ local function setupAutoSell(toggleText, stateKey, itemName)
                 end)
             end
         end
-    end)
+    })
 end
 
 setupAutoSell("Auto Sell Bitcoin", "ASB", "Bitcoin")
@@ -114,7 +115,5 @@ win:AddLabel({
 })
 
 win:AddLabel({
-    Text = "V1.2"
+    Text = "V1.3"
 })
-
--- fufufu
